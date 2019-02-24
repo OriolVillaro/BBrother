@@ -3,9 +3,11 @@
 # Després 
 
 """ from openbabel import PyBEL """
-from rdkit import Chem
+"""from rdkit import Chem
 import pybel
-from cinfony import rdk
+from cinfony import rdk"""
+
+import chemfp
 
 print ("\nalfa\n")
 
