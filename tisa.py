@@ -3,20 +3,29 @@
 import pybel
 import chemfp
 
-es_actiu = bool([true])
-allmols = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
+es_actiu = 1
+#allmols = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
 
-actius = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
-tuple_actius
-problemes = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
+#actius = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
+#problemes = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
 
-i, j = 0, 0
+for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf"):
+	
+	actius=(mol,es_actiu)
+
+
+es_actiu = 0
+
+for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf"):
+	
+	problemes=(mol,es_actiu)
+
+print(actius, problemes)	
+"""i, j = 0, 0
 
 matriz = [[actius[i].calcfp()|problemes[j].calcfp() for i in range(len(actius))] for j in range(len(problemes))] #Càlcul de la matriu amb tots els Tanimotos
 
 maxims = [0] * len(problemes) #Inicialització del string que inclourà els màxims
-results = []
-tipus = []
 
 l, m = 0, 0,
 
@@ -48,7 +57,7 @@ while o < len(maxims): #Ordenació dels Tanimotos de més gran a més petit mant
 
         n +=1      
 
-    o += 1
+    o += 1"""
 
 
 
