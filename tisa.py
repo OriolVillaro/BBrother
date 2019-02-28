@@ -3,13 +3,13 @@
 import pybel
 import chemfp
 
-es_actiu = 1
+#es_actiu = 1
 #allmols = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
 
-#actius = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
-#problemes = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
+actius = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
+problemes = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
 
-for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf"):
+"""for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf"):
 	
 	actius=(mol,es_actiu)
 
@@ -21,7 +21,9 @@ for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf"):
 	problemes=(mol,es_actiu)
 
 print(actius, problemes)	
-"""i, j = 0, 0
+"""
+
+i, j = 0, 0
 
 matriz = [[actius[i].calcfp()|problemes[j].calcfp() for i in range(len(actius))] for j in range(len(problemes))] #Càlcul de la matriu amb tots els Tanimotos
 
@@ -57,7 +59,7 @@ while o < len(maxims): #Ordenació dels Tanimotos de més gran a més petit mant
 
         n +=1      
 
-    o += 1"""
+    o += 1
 
 
 
