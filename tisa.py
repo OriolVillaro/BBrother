@@ -1,6 +1,11 @@
 # coding=utf-8
 
-import pybel
+import os
+
+os.environ["JPYPE_JVM"] = "/usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so"
+os.environ["CLASSPATH"]="/home/ori/TISA"
+
+from cinfony import pybel, rdk, cdk
 import chemfp
 
 #es_actiu = 1
