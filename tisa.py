@@ -1,34 +1,42 @@
 # coding=utf-8
 
-import os
+import os, sys
+import collections
 
-os.environ["JPYPE_JVM"] = "/usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so"
-os.environ["CLASSPATH"]="/home/ori/TISA"
+#os.environ["JPYPE_JVM"] = "/usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so"
+#os.environ["CLASSPATH"]="/home/ori/TISA"
 
-from cinfony import pybel, rdk, cdk
+from cinfony import pybel, rdk
+#from cinfony import cdk
 import chemfp
 
 #es_actiu = 1
 #allmols = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
 
+# ~ def eliminar_repetits(list_of_molecules):
+	
+	# ~ i=0
+	# ~ for i in list_of_molecules:
+		# ~ if list_of_molecules[i]
+		
 actius = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
 problemes = [mol for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf")]
 
-"""for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf"):
-	
-	actius=(mol,es_actiu)
-
-
-es_actiu = 0
-
-for mol in pybel.readfile("sdf", "/home/ori/TISA/test.sdf"):
-	
-	problemes=(mol,es_actiu)
-
-print(actius, problemes)	
-"""
-
 i, j = 0, 0
+
+llista_inchi = [0] * len(actius)
+for i in range(len(actius)):
+	llista_inchi[i] = actius[i].write("inchikey")
+	
+seen = set()
+uniq = []
+for x in llista_inchi:
+    if x not in seen:
+        uniq.append(x)
+        seen.add(x)
+
+print(uniq)
+print(seen)
 
 matriz = [[actius[i].calcfp()|problemes[j].calcfp() for i in range(len(actius))] for j in range(len(problemes))] #Càlcul de la matriu amb tots els Tanimotos
 
