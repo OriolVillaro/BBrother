@@ -1,0 +1,23 @@
+Metadata-Version: 1.0
+Name: cinfony
+Version: 1.2
+Summary: cinfony: a common API to several cheminformatics toolkits
+Home-page: http://cinfony.googlecode.com
+Author: Noel O'Boyle
+Author-email: baoilleach@gmail.com
+License: BSD
+Description: cinfony is a Python library that provides a common API to several
+        open source cheminformatics toolkits.
+        
+Platform: Any.
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: BSD License
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Natural Language :: English
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
