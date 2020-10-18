@@ -6,6 +6,8 @@ from chemfp import bitops
 import pandas as pd
 import sklearn
 from sklearn import metrics
+from openbabel import pybel
+#import web2py
 
 fptypes = (
     'RDKit-Pattern', 'OpenBabel-MACCS', 'RDKit-Avalon',
@@ -102,23 +104,47 @@ def calcularBEDROC(llistaTuplesOrdenada):
 
 	return bedroc
 
-def eliminar_repetits(list_of_molecules):
+def eliminar_repetits(sdf_file):
 	
+	mols=[mol for mol in pybel.readfile("sdf", sdf_file)]
+	unique_mols = {mol.write("inchi") : mol for mol in pybel.readfile("sdf", sdf_file)}
+	print(str(len(mols)-len(unique_mols)))
+	outputsdf = pybel.Outputfile("sdf", str(sdf_file[:-4])+"_uniques.sdf", overwrite=True) 
+	for mol in unique_mols.itervalues(): 
+		outputsdf.write(mol) 
+
+	outputsdf.close() 
+		
+		
+	"""fptype=chemfp.get_fingerprint_type('OpenBabel-MACCS')
+	T=fptype.toolkit
+	
+	
+	with T.read_molecules(sdf_file) as reader:
+		list_of_molecules=[T.copy_molecule(mol) for mol in reader]
+
+	list_of_molecules = [T.create_string(mol,"inchi") for mol in list_of_molecules]
 	list_of_molecules = list(dict.fromkeys(list_of_molecules))
 	
-	return list_of_molecules
-"""
-fptype=chemfp.get_fingerprint_type('OpenBabel-FP2')
+	with T.open_molecule_writer("unics.sdf") as writer:
+		for mol in list_of_molecules:
+			writer.write_molecule(mol)"""
+	
+	
+"""fptype=chemfp.get_fingerprint_type('OpenBabel-FP2')
 T=fptype.toolkit
 	
 	
 with T.read_molecules("actives_final.sdf") as reader:
-	actives=[T.copy_molecule(mol) for mol in reader]
+	actives_rep=[T.copy_molecule(mol) for mol in reader]
 	
 
 with T.read_molecules("decoys_final.sdf") as reader:
-	decoys=[T.copy_molecule(mol) for mol in reader]"""
+	decoys_rep=[T.copy_molecule(mol) for mol in reader]"""
 
+
+actius=eliminar_repetits("actives_final.sdf")
+eliminar_repetits("decoys_final.sdf")
 
 c=0
 
@@ -128,14 +154,14 @@ for fptype in fptypes:
 	T=fptype.toolkit
 	
 	
-	with T.read_molecules("actives_final.sdf") as reader:
+	with T.read_molecules("actives_final_uniques.sdf") as reader:
 		actives=[T.copy_molecule(mol) for mol in reader]
 		
 	
-	with T.read_molecules("decoys_final.sdf") as reader:
+	with T.read_molecules("decoys_final_uniques.sdf") as reader:
 		decoys=[T.copy_molecule(mol) for mol in reader]
 
-	
+	print(len(decoys))
 	llistaActius = crearLlistaTuple(actives,1)
 	llistaTotal = crearLlistaTuple(decoys,0)
 
