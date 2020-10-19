@@ -23,9 +23,7 @@ fptypes = (
 'ChemFP-Substruct-OpenBabel', 
 'RDKit-MACCS166'
     )
-    
-metriques = [[0 for x in range(4)] for y in range(len(fptypes))]
-   
+       
 """fptypes = (
     'RDKit-Pattern', 'OpenEye-Path', 'OpenBabel-MACCS', 'RDKit-Avalon',
 'RDKit-AtomPair', 'RDKit-Fingerprint', 'OpenEye-SMARTSScreen',
@@ -165,25 +163,28 @@ def funcio_general(fingerprint):
 	df_max.to_csv(r'/home/ori/Ophidian/Resultats/'+str(fingerprint)+'.csv')
 	print(str(fingerprint)+" COMPLETAT")
 	
-	EF1 = (calcularEF(1,maxims,len(llistaActius)))	 
-	EF10 = (calcularEF(10,maxims,len(llistaActius)))
-	AUC = sklearn.metrics.roc_auc_score(df_max['És Actiu'],df_max['Tanimoto'])
-	BEDROC = calcularBEDROC(maxims)
-
-	return EF1,EF10,AUC,BEDROC
+	metriques[0] =fingerprint
+	metriques[1] = (calcularEF(1,maxims,len(llistaActius)))	 
+	metriques[2] = (calcularEF(10,maxims,len(llistaActius)))
+	metriques[3] = sklearn.metrics.roc_auc_score(df_max['És Actiu'],df_max['Tanimoto'])
+	metriques[4] = calcularBEDROC(maxims)
+		
+	df_met.append(metriques)
 
 if __name__ == '__main__':
 	
 	eliminar_repetits("actives_final.sdf")
 	eliminar_repetits("decoys_final.sdf")
 
+	metriques = [0 for x in range(5)]
+	
 	"""pool = multiprocessing.Pool()
 	resultats=pool.map(funcio_general,fptypes)"""
 	
+	
 for fptype in fptypes:
-
-	metriques=funcio_general(fptype)
-
-print(metriques)
 	
-	
+	df_met = pd.DataFrame(columns = ['Fingerprint','EF1%','EF10%','AUC','BEDROC'])
+	funcio_general(fptype)
+
+print(df_met)
