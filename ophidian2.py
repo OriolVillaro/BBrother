@@ -168,8 +168,11 @@ def funcio_general(fingerprint):
 	metriques[2] = (calcularEF(10,maxims,len(llistaActius)))
 	metriques[3] = sklearn.metrics.roc_auc_score(df_max['És Actiu'],df_max['Tanimoto'])
 	metriques[4] = calcularBEDROC(maxims)
-		
-	df_met.append(metriques)
+	
+	return(metriques)
+	
+
+
 
 if __name__ == '__main__':
 	
@@ -178,13 +181,19 @@ if __name__ == '__main__':
 
 	metriques = [0 for x in range(5)]
 	
-	"""pool = multiprocessing.Pool()
-	resultats=pool.map(funcio_general,fptypes)"""
 	
 	
-for fptype in fptypes:
+	#df_met = pd.DataFrame(columns = ['Fingerprint','EF1%','EF10%','AUC','BEDROC'])
 	
-	df_met = pd.DataFrame(columns = ['Fingerprint','EF1%','EF10%','AUC','BEDROC'])
-	funcio_general(fptype)
+	pool = multiprocessing.Pool()
+	resultats=pool.map(funcio_general,fptypes)
+	#df_met=pd.DataFrame(columns = ['Fingerprint','EF1%','EF10%','AUC','BEDROC'])
+	df_met=pd.DataFrame(resultats, columns =['Fingerprint','EF1%','EF10%','AUC','BEDROC'])
+#	for fptype in fptypes:
 
-print(df_met)
+	"""for i in range(len(resultats)):
+		print(i)"""
+	#df_met.append([resultats])
+		
+
+	print(df_met)
