@@ -1,0 +1,35 @@
+{{extend 'layout.html'}}
+
+{{block header}}
+<div class="jumbotron jumbotron-fluid background" style="background-color: #D49504; color:white; padding:30px;word-wrap:break-word;">
+  <div class="container center">
+    <h1 class="display-5">/{{=request.application}}/{{=request.controller}}/{{=request.function}}</h1>
+  </div>
+</div>
+{{end}}
+
+<div class="row">
+  <div class="col-md-12">
+    <p class="h1">{{=T('Welcome to Ophidan!')}}</p>
+    <p class="h4">{{=T('An online tool for virtual screening')}}</p>
+
+	<br>
+
+    <p class="h5">{{=T('Select the files with the active molecules and the decoys (sdf files):')}}</p>
+    <ol style="word-wrap:break-word;">
+	<br>
+	<!--<label for="actius">Actives:</label>
+	<input type="file" id="actius" class="upload" name="actius">
+	<label for="decoys">Decoys:</label>
+	<input type="file" id="decoys" class="upload" name="decoys">
+      
+    </ol></-->
+    
+    
+    {{=BEAUTIFY(response._vars)}}
+    {{pass}}
+  </div>
+</div>
+
+
+

@@ -9,7 +9,9 @@ from sklearn import metrics
 from openbabel import pybel
 import multiprocessing
 from multiprocessing import Pool
-#import web2py
+
+
+pybel.ob.obErrorLog.SetOutputLevel(-1)
 
 fptypes = (
     'RDKit-Pattern', 'OpenBabel-MACCS', 'RDKit-Avalon',
@@ -53,10 +55,7 @@ def crearLlistaTuple(list_of_molecules, esAct):
 	return [(mol, esAct) for mol in list_of_molecules]
 	
 def trobarMaxims(llista_actius, llista_totals):  #Mateixa molècula, repetits, ig
-	
-	df = pd.DataFrame()
-	df["Molècula"] = llista_totals
-	
+		
 	
 	maxims = [[0 for x in range(4)] for y in range(len(llista_totals))]	
 	
@@ -163,7 +162,7 @@ def funcio_general(fingerprint):
 	df_max.to_csv(r'/home/ori/Ophidian/Resultats/'+str(fingerprint)+'.csv')
 	print(str(fingerprint)+" COMPLETAT")
 	
-	metriques[0] =fingerprint
+	metriques[0] = fingerprint
 	metriques[1] = (calcularEF(1,maxims,len(llistaActius)))	 
 	metriques[2] = (calcularEF(10,maxims,len(llistaActius)))
 	metriques[3] = sklearn.metrics.roc_auc_score(df_max['És Actiu'],df_max['Tanimoto'])
@@ -178,22 +177,23 @@ if __name__ == '__main__':
 	
 	eliminar_repetits("actives_final.sdf")
 	eliminar_repetits("decoys_final.sdf")
-
+	#print("\n\n")
+	
 	metriques = [0 for x in range(5)]
-	
-	
-	
-	#df_met = pd.DataFrame(columns = ['Fingerprint','EF1%','EF10%','AUC','BEDROC'])
 	
 	pool = multiprocessing.Pool()
 	resultats=pool.map(funcio_general,fptypes)
-	#df_met=pd.DataFrame(columns = ['Fingerprint','EF1%','EF10%','AUC','BEDROC'])
+	
 	df_met=pd.DataFrame(resultats, columns =['Fingerprint','EF1%','EF10%','AUC','BEDROC'])
-#	for fptype in fptypes:
+	df_met.to_csv(r'/home/ori/Ophidian/Resultats/metriques.csv')
 
-	"""for i in range(len(resultats)):
-		print(i)"""
-	#df_met.append([resultats])
-		
+	print("\n\nMètriques generades:\n")
+	print("\nMillor fp segons EF1%:\n")
+	print(df_met.iloc[df_met['EF1%'].idxmax()])
+	print("\n\nMillor fp segons EF10%:\n")
+	print(df_met.iloc[df_met['EF10%'].idxmax()])
+	print("\n\nMillor fp segons AUC:\n")
+	print(df_met.iloc[df_met['AUC'].idxmax()])
+	print("\n\nMillor fp segons BEDROC:\n")
+	print(df_met.iloc[df_met['BEDROC'].idxmax()])
 
-	print(df_met)

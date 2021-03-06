@@ -1,0 +1,119 @@
+timestamp: 2021-02-07T23:38:52.081137
+CREATE TABLE "auth_user"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "first_name" CHAR(128),
+    "last_name" CHAR(128),
+    "email" CHAR(512),
+    "password" CHAR(512),
+    "registration_key" CHAR(512),
+    "reset_password_key" CHAR(512),
+    "registration_id" CHAR(512)
+);
+success!
+timestamp: 2021-02-07T23:38:52.213393
+CREATE TABLE "auth_group"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "role" CHAR(512),
+    "description" TEXT
+);
+success!
+timestamp: 2021-02-07T23:38:52.315467
+CREATE TABLE "auth_membership"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "user_id" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE  ,
+    "group_id" INTEGER REFERENCES "auth_group" ("id") ON DELETE CASCADE  
+);
+success!
+timestamp: 2021-02-07T23:38:52.415403
+CREATE TABLE "auth_permission"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "group_id" INTEGER REFERENCES "auth_group" ("id") ON DELETE CASCADE  ,
+    "name" CHAR(512),
+    "table_name" CHAR(512),
+    "record_id" INTEGER
+);
+success!
+timestamp: 2021-02-07T23:38:52.524925
+CREATE TABLE "auth_event"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "time_stamp" TIMESTAMP,
+    "client_ip" CHAR(512),
+    "user_id" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE  ,
+    "origin" CHAR(512),
+    "description" TEXT
+);
+success!
+timestamp: 2021-02-07T23:38:52.636598
+CREATE TABLE "auth_cas"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "user_id" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE  ,
+    "created_on" TIMESTAMP,
+    "service" CHAR(512),
+    "ticket" CHAR(512),
+    "renew" CHAR(1)
+);
+success!
+timestamp: 2021-02-23T18:22:55.679306
+CREATE TABLE "metriques"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "fp" CHAR(512),
+    "EF1" INTEGER,
+    "EF10" INTEGER,
+    "AUC" DOUBLE,
+    "BEDROC" DOUBLE
+);
+success!
+timestamp: 2021-02-23T18:24:56.660547
+CREATE TABLE "maxims"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "Molecula" CHAR(512),
+    "Tanimoto" DOUBLE,
+    "Actiu" CHAR(1),
+    "Actiu_mes_semblant" CHAR(512)
+);
+success!
+timestamp: 2021-02-28T20:30:36.304800
+CREATE TABLE "arxius"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "actius" CHAR(512),
+    "decoys" CHAR(512)
+);
+success!
+timestamp: 2021-03-01T14:48:38.892613
+CREATE TABLE "actius"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "file" CHAR(512)
+);
+success!
+timestamp: 2021-03-01T14:48:39.039923
+CREATE TABLE "decoys"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "file" CHAR(512)
+);
+success!
+timestamp: 2021-03-04T10:24:59.825012
+CREATE TABLE "metriques"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "fp" CHAR(512),
+    "EF1" INTEGER,
+    "EF10" INTEGER,
+    "AUC" DOUBLE,
+    "BEDROC" DOUBLE
+);
+success!
+timestamp: 2021-03-04T10:24:59.948692
+CREATE TABLE "maxims"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "Molecula" CHAR(512),
+    "Tanimoto" DOUBLE,
+    "Actiu" CHAR(1),
+    "Actiu_mes_semblant" CHAR(512)
+);
+success!
+timestamp: 2021-03-04T10:25:00.023855
+CREATE TABLE "arxius"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "actius" CHAR(512),
+    "decoys" CHAR(512)
+);
+success!

@@ -5,9 +5,9 @@ import collections
 from  rdkit.ML.Scoring import Scoring
 
 
-from openpyxl import Workbook
+#from openpyxl import Workbook
 
-from openpyxl.utils.dataframe import dataframe_to_rows
+#from openpyxl.utils.dataframe import dataframe_to_rows
 
 
 #os.environ["JPYPE_JVM"] = "/usr/lib/jvm/java-11-openjdk-amd64/lib/server/libjvm.so"
@@ -102,9 +102,7 @@ def trobarMaxims(llista_actius, llista_totals, fp):  #Mateixa molècula, repetit
 		
 		maxims[i][0] = llista_totals[i][0]
 		maxims[i][1] = 0
-		"""if(type(maxims[i][1]).__name__=="LongSparseIntVect"):
-			maxims[i][1] = float(maxims[i][1])
-		"""	
+		
 		for j in range(len(llista_actius)):
 			if (((llistaFPT[i] | llistaFPA[j]) > maxims[i][1]) and (llista_totals[i][0] is not llista_actius[j][0])): #Comprovar el is not / mateixa molecula
 				tanimoto = llistaFPT[i] | llistaFPA[j]
@@ -185,7 +183,7 @@ for fp in pybel.fps: #calcular fps al principi de cada iteració, adaptar el cod
 
 	df = pd.DataFrame(maxims, columns =['Molècula','Tanimoto', 'És Actiu', 'Actiu més semblant'])
 	
-	df.to_csv(r'/home/ori/TISA/Resultats/'+fp+'.csv')
+	df.to_csv(r'/home/ori/Ophidian/Resultats/'+fp+'.csv')
 	print("\t-"+fp) #fer fp/len(fps)*100 completat
 	
 	print ("\n\t\tEF1%:\t"+str(calcularEF(1,maxims,len(llistaActius))))			 
@@ -198,6 +196,7 @@ for fp in pybel.fps: #calcular fps al principi de cada iteració, adaptar el cod
 	#data = [('EF1%', calcularEF(1,maxims,len(llistaActius))), ('EF10%', calcularEF(10,maxims,len(llistaActius))), ('BEDROC', calcularBEDROC(maxims))]
 	#csvfile = open(fp+'.csv', 'wb')
 
+"""
 actius = passarRDK(actius)
 problemes = passarRDK(problemes)
 
@@ -214,24 +213,18 @@ for fp in rdk.fps:# and str(fp) not "torsions" or "atompairs":
 	maxims = ordenarTanimotos(maxims)
 
 	df = pd.DataFrame(maxims, columns =['Molècula','Tanimoto', 'És Actiu', 'Actiu més semblant'])#.set_index("Molècula")	
-	df.to_csv(r'/home/ori/TISA/Resultats/'+fp+'.csv', index=False) 
+	df.to_csv(r'/home/ori/Ophidian/Resultats/'+fp+'.csv', index=False) 
 	
 	print("\t-"+fp) #fer fp/len(fps)*100 completats
 	print("\n\t\tEF1%:\t"+str(calcularEF(1,maxims,len(llistaActius))))			#Afegir àrea sobre corba, 
 	print("\t\tEF10%:\t"+str(calcularEF(10,maxims,len(llistaActius))))
-	"""try:
-		print ("\t\tAUC:\t"+str(sklearn.metrics.roc_auc_score(df['És Actiu'],df['Tanimoto']))+"\n")
-	except Exception as e:
-		print("maxims[2]={}".format(maxims[2]))
-		print("maxims[1]={}".format(maxims[1]))
-		raise e"""
 	print ("\t\tAUC:\t"+str(sklearn.metrics.roc_auc_score(df['És Actiu'],df['Tanimoto'])))
 	print ("\t\tBEDROC:\t"+str(calcularBEDROC(maxims))+"\n")
 	
 	
 print("\n")
 
-"""
+
 for row in data:
 	line = ','.join(str(row))
 	csvfile.write(line + '\n')
