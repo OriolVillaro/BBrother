@@ -50,14 +50,23 @@ def download():
     return response.download(request, db)
     
 def processing():
+		
+	row = db(db.arxius).select().first()
 	
-	act = db(db.arxius.actius!=None).select()
-	#act=executesql("SELECT * FROM arxius")
-
-	#act=db.arxius.select(actius)
-	#dec=SQLFORM(db.arxius(request.decoys))
+	(act, astream) = db.arxius.actius.retrieve(row.actius)
+	(dec, dstream) = db.arxius.decoys.retrieve(row.decoys)
 	
-	#mols=[mol for mol in pybel.readfile("sdf", act)]
+	actlist=astream.read()
+	declist=dstream.read()
 	
-	return dict(act=act)
+	amols=[mol for mol in pybel.readstring("sdf", actlist)]
+	dmols=[mol for mol in pybel.readstring("sdf", declist)]
+	
+	print(len(amols))
+	print(len(dmols))
+	
+	
+	
+	
+	return dict(dmols=dmols)
 	
