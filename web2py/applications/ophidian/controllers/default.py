@@ -54,19 +54,17 @@ def processing():
 	row = db(db.arxius).select().first()
 	
 	(act, astream) = db.arxius.actius.retrieve(row.actius)
-	(dec, dstream) = db.arxius.decoys.retrieve(row.decoys)
+	#act = db(db.arxius).select("actius")
+
+	#(dec, dstream) = db.arxius.decoys.retrieve(row.decoys)
 	
 	actlist=astream.read()
-	declist=dstream.read()
+	#declist=dstream.read()
 	
-	amols=[mol for mol in pybel.readstring("sdf", actlist)]
-	dmols=[mol for mol in pybel.readstring("sdf", declist)]
+	amols=list(pybel.readstring("sdf", actlist))
+	#dmols=[mol for mol in pybel.readfile("sdf", declist)]
 	
-	print(len(amols))
-	print(len(dmols))
+	print len(amols)
 	
-	
-	
-	
-	return dict(dmols=dmols)
+	return dict(amols=amols)
 	

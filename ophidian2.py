@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 from  rdkit.ML.Scoring import Scoring
 import chemfp
 from chemfp import bitops
@@ -81,7 +82,7 @@ def trobarMaxims(llista_actius, llista_totals):  #Mateixa molècula, repetits, i
 
 def ordenarTanimotos(llista_maxims):
 	
-	llista_maxims.sort(key=lambda x: x[1],reverse = True)
+	llista_maxims.sort(key=lambda x: x[2],reverse = True)
 	
 	return llista_maxims
 
@@ -100,31 +101,41 @@ def calcularEF(factor, llistaTuplesOrdenada, num_actius):
 	
 def calcularBEDROC(llistaTuplesOrdenada):
 	
-	llista_scores = [(1-el[1], el[2]) for el in llistaTuplesOrdenada]
+	llista_scores = [(1-el[2], el[3]) for el in llistaTuplesOrdenada]
 	bedroc = Scoring.CalcBEDROC(llista_scores, 1, 20) 
 
 	return bedroc
 
-def eliminar_repetits(sdf_file):
+def eliminar_repetits(mfile):
 	
-	mols=[mol for mol in pybel.readfile("sdf", sdf_file)]
-	unique_mols = {mol.write("inchi") : mol for mol in pybel.readfile("sdf", sdf_file)}
-	outputsdf = pybel.Outputfile("sdf", str(sdf_file[:-4])+"_uniques.sdf", overwrite=True) 
+	if(mfile.endswith(".sdf")):
+		#mols=[mol for mol in pybel.readfile("sdf", mfile)]
+		unique_mols = {mol.write("inchi") : mol for mol in pybel.readfile("sdf", mfile)}
+		
+	elif(mfile.endswith(".smi")):
+			unique_mols = {mol.write("inchi") : mol for mol in pybel.readfile("smi", mfile)}
+			
+	outputsdf = pybel.Outputfile("sdf", str(mfile[:-4])+"_uniques.sdf", overwrite=True) 
 	for mol in unique_mols.itervalues(): 
 		outputsdf.write(mol) 
-
+	
 	outputsdf.close() 
 		
 def funcio_general(fingerprint):
 
 	fptype=chemfp.get_fingerprint_type(fingerprint)
 	T=fptype.toolkit
-		
-	with T.read_molecules("actives_final_uniques.sdf") as reader:
+	
+	mfile=str(sys.argv[1])
+	mfile=mfile[:-4]+"_uniques.sdf"
+			
+	with T.read_molecules(mfile) as reader:
 		actives=[T.copy_molecule(mol) for mol in reader]
 		
+	mfile=str(sys.argv[2])
+	mfile=mfile[:-4]+"_uniques.sdf"
 	
-	with T.read_molecules("decoys_final_uniques.sdf") as reader:
+	with T.read_molecules(mfile) as reader:
 		decoys=[T.copy_molecule(mol) for mol in reader]
 
 	llistaActius = crearLlistaTuple(actives,1)
@@ -133,10 +144,9 @@ def funcio_general(fingerprint):
 	llistaTotal = llistaActius + llistaTotal
 	
 	df_max = pd.DataFrame()
-	df_max["Molècula"] = llistaTotal
+	#df_max["Molècula"] = llistaTotal	
 	
-	
-	maxims = [[0 for x in range(4)] for y in range(len(llistaTotal))]	
+	maxims = [[0 for x in range(6)] for y in range(len(llistaTotal))]	
 	
 	llistaFPA = [fptype.compute_fingerprint(llistaActius[a][0]) for a in range(len(llistaActius))]
 	llistaFPT = [fptype.compute_fingerprint(llistaTotal[b][0]) for b in range(len(llistaTotal))]
@@ -144,28 +154,31 @@ def funcio_general(fingerprint):
 	
 	for i in range(len(llistaTotal)):
 		
-		maxims[i][0] = T.create_string(llistaTotal[i][0],"smistring")
-		maxims[i][1] = 0
+		maxims[i][0] = T.get_id(llistaTotal[i][0])
+		maxims[i][1] = T.create_string(llistaTotal[i][0],"smistring")
+		maxims[i][2] = 0
 		
 		for j in range(len(llistaActius)):
 			tan=chemfp.bitops.byte_tanimoto(llistaFPT[i],llistaFPA[j])
-			if ((tan > maxims[i][1]) and (llistaTotal[i][0] is not llistaActius[j][0])): #Comprovar el is not / mateixa molecula
-				
-				maxims[i][1] = tan
-				maxims[i][2] = llistaTotal[i][1]
-				maxims[i][3] = T.create_string(llistaActius[j][0],"smistring")
+			id_d = T.get_id(llistaTotal[i][0])
+			id_a = T.get_id(llistaActius[j][0])
+			if ((tan > maxims[i][2]) and (id_d is not id_a)): #Descartar si s'està comparant una molècula amb ella mateixa
+				maxims[i][2] = tan
+				maxims[i][3] = llistaTotal[i][1]
+				maxims[i][4] = T.get_id(llistaActius[j][0])
+				maxims[i][5] = T.create_string(llistaActius[j][0],"smistring")
 				
 	maxims = ordenarTanimotos(maxims)
 	
-	df_max = pd.DataFrame(maxims, columns =['Molècula','Tanimoto', 'És Actiu', 'Actiu més semblant'])
+	df_max = pd.DataFrame(maxims, columns =['Molecule ID','Molecule SMILES','Tanimoto', 'Is Active', 'Closer Active ID', 'Closer Active SMILES'])
 		
-	df_max.to_csv(r'/home/ori/Ophidian/Resultats/'+str(fingerprint)+'.csv')
-	print(str(fingerprint)+" COMPLETAT")
+	df_max.to_csv(r'/home/ori/Ophidian/Results/'+str(fingerprint)+'.csv')
+	print(str(fingerprint)+" COMPLETED")
 	
 	metriques[0] = fingerprint
-	metriques[1] = (calcularEF(1,maxims,len(llistaActius)))	 
+	metriques[1] = (calcularEF(1,maxims,len(llistaActius)))
 	metriques[2] = (calcularEF(10,maxims,len(llistaActius)))
-	metriques[3] = sklearn.metrics.roc_auc_score(df_max['És Actiu'],df_max['Tanimoto'])
+	metriques[3] = sklearn.metrics.roc_auc_score(df_max['Is Active'],df_max['Tanimoto'])
 	metriques[4] = calcularBEDROC(maxims)
 	
 	return(metriques)
@@ -175,9 +188,8 @@ def funcio_general(fingerprint):
 
 if __name__ == '__main__':
 	
-	eliminar_repetits("actives_final.sdf")
-	eliminar_repetits("decoys_final.sdf")
-	#print("\n\n")
+	eliminar_repetits(sys.argv[1])
+	eliminar_repetits(sys.argv[2])
 	
 	metriques = [0 for x in range(5)]
 	
@@ -185,15 +197,15 @@ if __name__ == '__main__':
 	resultats=pool.map(funcio_general,fptypes)
 	
 	df_met=pd.DataFrame(resultats, columns =['Fingerprint','EF1%','EF10%','AUC','BEDROC'])
-	df_met.to_csv(r'/home/ori/Ophidian/Resultats/metriques.csv')
+	df_met.to_csv(r'/home/ori/Ophidian/Resultats/metrics.csv')
 
 	print("\n\nMètriques generades:\n")
-	print("\nMillor fp segons EF1%:\n")
+	print("\nBest fp according to EF1%:\n")
 	print(df_met.iloc[df_met['EF1%'].idxmax()])
-	print("\n\nMillor fp segons EF10%:\n")
+	print("\n\nBest fp according to EF10%:\n")
 	print(df_met.iloc[df_met['EF10%'].idxmax()])
-	print("\n\nMillor fp segons AUC:\n")
+	print("\n\nBest fp according to AUC:\n")
 	print(df_met.iloc[df_met['AUC'].idxmax()])
-	print("\n\nMillor fp segons BEDROC:\n")
+	print("\n\nBest fp according to BEDROC:\n")
 	print(df_met.iloc[df_met['BEDROC'].idxmax()])
 
